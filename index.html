@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Happy Birthday 🎉</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:'Poppins',sans-serif;
+      color:#fff;
+      background:linear-gradient(270deg,#6a0dad,#9b59b6,#8e44ad);
+      background-size:600% 600%;
+      animation:gradientMove 15s ease infinite;
+      min-height:100vh;
+      text-align:center;
+      overflow-x:hidden;
+      padding:1rem;
+    }
+    @keyframes gradientMove{
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+
+    header{margin-top:2rem;position:relative;z-index:2}
+    header h1{font-size:2rem;font-weight:600;margin-bottom:.5rem;animation:fadeIn 1.2s ease}
+    header p{font-size:1rem;opacity:.9;animation:fadeIn 1.8s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+
+    .btn{
+      display:inline-block;margin:1.5rem 0;padding:14px 30px;border-radius:35px;
+      font-weight:600;font-size:1rem;color:#fff;background:linear-gradient(90deg,#8e44ad,#9b59b6);
+      box-shadow:0 0 15px rgba(155,89,182,.8);transition:.25s;cursor:pointer;position:relative;z-index:2
+    }
+    .btn:active,.btn:hover{transform:scale(1.06);box-shadow:0 0 24px rgba(255,215,0,.9)}
+
+    /* Picture wrapper with glow */
+    .pic-wrap{display:none;width:170px;height:170px;margin:1.5rem auto 0;position:relative;border-radius:50%;}
+    .pic-wrap::before{
+      content:"";position:absolute;inset:-10px;border-radius:50%;
+      background:radial-gradient(60% 60% at 50% 50%, rgba(216,180,254,.65), rgba(155,89,182,.25) 60%, transparent 70%);
+      filter:blur(10px);animation:glowPulse 2.8s ease-in-out infinite;z-index:0;
+    }
+    @keyframes glowPulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.06);opacity:1}}
+
+    #birthdayPic{width:100%;height:100%;border-radius:50%;object-fit:cover;position:relative;z-index:1;box-shadow:0 0 20px rgba(155,89,182,.9);animation:popIn .9s ease forwards;}
+    @keyframes popIn{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+
+    /* Quotes as buttons */
+    #quotes{margin-top:1rem;display:none;flex-direction:column;gap:.8rem;align-items:center;}
+    .quote-btn{
+      padding:12px 20px;border-radius:30px;background:rgba(255,255,255,.12);color:#fff;
+      font-size:1rem;border:2px solid #d8b4fe;transition:.2s;width:90%;max-width:300px;
+      box-shadow:0 0 10px rgba(155,89,182,.6);cursor:pointer;position:relative;
+    }
+    .quote-btn:active,.quote-btn:hover{background:rgba(155,89,182,.35);transform:scale(1.03)}
+
+    /* Side pop hearts */
+    .pop-heart{
+      position:absolute;font-size:16px;pointer-events:none;opacity:1;
+      animation:sidePop .9s ease-out forwards;
+    }
+    @keyframes sidePop{
+      0%{transform:translate(0,0) scale(.75);opacity:1}
+      100%{transform:translate(var(--x),var(--y)) scale(1.1);opacity:0}
+    }
+
+    /* Background floating hearts */
+    .bg-heart{
+      position:fixed;top:50%;font-size:18px;opacity:.9;
+      animation:floatHeart 5s linear forwards;
+      z-index:0;
+    }
+    @keyframes floatHeart{
+      0%{opacity:.9;transform:scale(.6)}
+      100%{transform:translateX(var(--tx)) translateY(var(--ty)) scale(1.2);opacity:0}
+    }
+
+    footer{padding:1rem;font-size:.8rem;background:rgba(0,0,0,.3);border-radius:12px;margin-top:2rem}
+
+    @media (max-width:480px){
+      header h1{font-size:1.6rem}
+      header p{font-size:.92rem}
+      .btn{font-size:.92rem;padding:12px 24px}
+      .pic-wrap{width:150px;height:150px}
+      .quote-btn{font-size:.92rem;max-width:320px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🖤 Happiezt Birthday Devatharshini🎂</h1>
+    <p>Tap below and see suprise💜</p>
+    <button class="btn" id="surpriseBtn">Tap for a Surprise 🎁</button>
+  </header>
+
+  <!-- Picture + glow -->
+  <div class="pic-wrap" id="picWrap">
+    <img id="birthdayPic" src="person.jpg" alt="Birthday Person"/>
+  </div>
+
+  <!-- Quotes as buttons -->
+  <div id="quotes"></div>
+
+  <footer><p>HAPPIEZT BIRTHDAY DHARSHUU🖤 🎉</p></footer>
+
+  <script>
+    const quotesList=[
+      "💜 Wishing you wonderfull bday dear!!",
+      "💜 Stay prettiezt being in the world with ur brightest smile!!",
+      "💜 Stay charmistic as before!!",
+      "💜 Be happy with ur loved ones😊!!"
+    ];
+    const surpriseBtn=document.getElementById('surpriseBtn');
+    const picWrap=document.getElementById('picWrap');
+    const quotesDiv=document.getElementById('quotes');
+
+    function emitSideHeartsFrom(el,{count=6,distance=90,size=16}={}){
+      const rect=el.getBoundingClientRect();
+      const centerX=rect.left+rect.width/2;
+      const centerY=rect.top+rect.height/2+window.scrollY;
+      for(let i=0;i<count;i++){
+        const h=document.createElement('div');
+        h.className='pop-heart';
+        h.textContent='💜';
+        h.style.left=(centerX-size/2+(Math.random()*10-5))+'px';
+        h.style.top =(centerY-size/2+(Math.random()*10-5))+'px';
+        const dir=Math.random()<0.5?-1:1;
+        const x=dir*(distance+Math.random()*25);
+        const y=(Math.random()*40-20);
+        h.style.setProperty('--x',x+'px');
+        h.style.setProperty('--y',y+'px');
+        h.style.fontSize=size+'px';
+        document.body.appendChild(h);
+        setTimeout(()=>h.remove(),950);
+      }
+    }
+
+    function renderQuoteButtons(){
+      quotesDiv.innerHTML='';
+      quotesList.forEach(q=>{
+        const b=document.createElement('button');
+        b.className='quote-btn';
+        b.textContent=q;
+        b.addEventListener('click',()=>emitSideHeartsFrom(b,{count:5,distance:70,size:16}));
+        quotesDiv.appendChild(b);
+      });
+    }
+
+    function showSurprise(){
+      picWrap.style.display='block';
+      quotesDiv.style.display='flex';
+      renderQuoteButtons();
+      emitSideHeartsFrom(picWrap,{count:8,distance:95,size:18});
+    }
+    surpriseBtn.addEventListener('click',showSurprise);
+
+    picWrap.addEventListener('click',()=>emitSideHeartsFrom(picWrap,{count:6,distance:90,size:18}));
+
+    // Background floating hearts from sides
+    function spawnBgHeart(){
+      const h=document.createElement('div');
+      h.className='bg-heart';
+      h.textContent='💜';
+      const side=Math.random()<0.5?'left':'right';
+      const top=Math.random()*window.innerHeight*0.8+window.innerHeight*0.1;
+      h.style.top=top+'px';
+      if(side==='left'){h.style.left='-20px';h.style.setProperty('--tx', (window.innerWidth/2+Math.random()*150)+'px');}
+      else{h.style.left=window.innerWidth+'px';h.style.setProperty('--tx', -(window.innerWidth/2+Math.random()*150)+'px');}
+      h.style.setProperty('--ty',(Math.random()*100-50)+'px');
+      document.body.appendChild(h);
+      setTimeout(()=>h.remove(),5000);
+    }
+    setInterval(spawnBgHeart,1200); // spawn every ~1.2s
+  </script>
+</body>
+</html>
